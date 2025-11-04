@@ -7,7 +7,7 @@ let selectedStartHour = 9;
 let selectedStartMinute = 0;
 let selectedEndHour = 18;
 let selectedEndMinute = 0;
-let customDialogResolve = null; // カスタムダイアログのPromise resolve
+var customDialogResolve = null; // カスタムダイアログのPromise resolve (varで宣言して重複を回避)
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
@@ -160,7 +160,8 @@ function setupEventListeners() {
     }
 
     // カスタムダイアログのイベントリスナー
-    document.getElementById('customDialogOk').addEventListener('click', () => {
+    const customDialogOk = document.getElementById('customDialogOk');
+    if (customDialogOk) customDialogOk.addEventListener('click', () => {
         if (customDialogResolve) {
             customDialogResolve(true);
             customDialogResolve = null;
@@ -168,7 +169,8 @@ function setupEventListeners() {
         hideCustomDialog();
     });
 
-    document.getElementById('customDialogCancel').addEventListener('click', () => {
+    const customDialogCancel = document.getElementById('customDialogCancel');
+    if (customDialogCancel) customDialogCancel.addEventListener('click', () => {
         if (customDialogResolve) {
             customDialogResolve(false);
             customDialogResolve = null;
@@ -176,7 +178,8 @@ function setupEventListeners() {
         hideCustomDialog();
     });
 
-    document.getElementById('customDialogClose').addEventListener('click', () => {
+    const customDialogClose = document.getElementById('customDialogClose');
+    if (customDialogClose) customDialogClose.addEventListener('click', () => {
         if (customDialogResolve) {
             customDialogResolve(false);
             customDialogResolve = null;
