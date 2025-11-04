@@ -188,6 +188,19 @@ body {
     margin-bottom: 20px;
 }
 
+/* 全日設定ボタンの色を他のボタンと統一 */
+.bulk-apply-buttons .btn-primary {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.bulk-apply-buttons .btn-primary:hover {
+    background: #f8f9ff;
+    border-color: #5568d3;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
 /* 曜日別セクション */
 .weekday-bulk-section {
     border-top: 1px solid #e0e0e0;
@@ -204,7 +217,7 @@ body {
 
 .weekday-bulk-buttons-compact {
     display: flex;
-    gap: 2px;
+    gap: 1px;
     justify-content: space-between;
     flex-wrap: nowrap;
 }
@@ -212,7 +225,7 @@ body {
 .btn-weekday-compact {
     flex: 1;
     min-width: 0;
-    padding: 6px 2px;
+    padding: 6px 1px;
     font-size: 11px;
     font-weight: 600;
     background: white;
@@ -424,7 +437,9 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    gap: 20px;
 }
 
 .time-card:hover {
@@ -446,7 +461,8 @@ body {
     display: flex;
     align-items: center;
     gap: 20px;
-    width: 100%;
+    flex: 1;
+    min-width: 0;
 }
 
 .card-date {
@@ -487,32 +503,49 @@ body {
     font-size: 15px;
 }
 
+/* 右側の時間情報セクション */
+.card-hours-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    min-width: 90px;
+}
+
 .card-hours {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid #e0e0e0;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     gap: 6px;
 }
 
 .card-break-row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 4px 0;
-    font-size: 14px;
+    justify-content: flex-end;
+    gap: 6px;
+    font-size: 12px;
 }
 
 .hours-icon {
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .hours-text {
     font-size: 14px;
     font-weight: 600;
     color: #48bb78;
+}
+
+.break-icon {
+    font-size: 12px;
+}
+
+.break-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #667eea;
 }
 
 /* 合計表示 */

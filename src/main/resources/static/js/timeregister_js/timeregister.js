@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeTimePicker();
     setupEventListeners();
     initializeAllCards();
+    updateCardDisplay(); // カードのレイアウトを初期化
     updateTotalHours();
 });
 
@@ -626,26 +627,26 @@ function updateTotalHours() {
 function updateCardDisplay() {
     const breakCheckbox = document.getElementById('breakCheckbox');
     if (!breakCheckbox) return;
-    
+
     const isBreakMode = breakCheckbox.checked;
-    
+
     document.querySelectorAll('.time-card').forEach(card => {
         const startTime = card.querySelector('.start-time-value').value;
         const endTime = card.querySelector('.end-time-value').value;
-        
+
         if (!startTime || !endTime) return;
-        
+
         const [startHour, startMin] = startTime.split(':').map(Number);
         const [endHour, endMin] = endTime.split(':').map(Number);
-        
+
         const startMinutesOfDay = startHour * 60 + startMin;
         const endMinutesOfDay = endHour * 60 + endMin;
-        
+
         let diffMinutes = endMinutesOfDay - startMinutesOfDay;
         if (diffMinutes < 0) {
             diffMinutes += 24 * 60;
         }
-        
+
         const hours = Math.floor(diffMinutes / 60);
         let breakMinutes = 0;
         if (hours < 6) {
@@ -655,16 +656,32 @@ function updateCardDisplay() {
         } else {
             breakMinutes = 60;
         }
-        
+
+        // card-hoursを card-hours-section でラップ（初回のみ）
+        let cardHours = card.querySelector('.card-hours');
+        let hoursSection = card.querySelector('.card-hours-section');
+
+        if (cardHours && !hoursSection) {
+            // 新しいsectionを作成
+            hoursSection = document.createElement('div');
+            hoursSection.className = 'card-hours-section';
+
+            // card-hoursをsectionでラップ
+            cardHours.parentNode.insertBefore(hoursSection, cardHours);
+            hoursSection.appendChild(cardHours);
+        }
+
         // 休憩時間表示の有無を切り替え
         let breakRow = card.querySelector('.card-break-row');
         if (isBreakMode) {
-            if (!breakRow) {
+            if (!breakRow && hoursSection) {
                 breakRow = document.createElement('div');
                 breakRow.className = 'card-break-row';
-                card.insertBefore(breakRow, card.querySelector('.card-hours'));
+                hoursSection.appendChild(breakRow);
             }
-            breakRow.innerHTML = `<span class="time-label">休憩</span><span class="time-value">${breakMinutes}分</span>`;
+            if (breakRow) {
+                breakRow.innerHTML = `<span class="break-icon">⏰</span><span class="break-text">休憩 ${breakMinutes}分</span>`;
+            }
         } else {
             if (breakRow) {
                 breakRow.remove();
