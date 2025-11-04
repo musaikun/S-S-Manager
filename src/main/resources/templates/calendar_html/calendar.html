@@ -106,7 +106,21 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- カスタムアラート/確認ダイアログ -->
+    <div id="customDialog" class="help-overlay" style="display: none;">
+        <div class="help-popup custom-dialog-popup">
+            <button class="help-close" id="customDialogClose">×</button>
+            <div class="help-content">
+                <p class="help-title" id="customDialogMessage">確認</p>
+                <div class="dialog-buttons" id="customDialogButtons" style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button id="customDialogCancel" class="btn btn-secondary" style="flex: 1;">キャンセル</button>
+                    <button id="customDialogOk" class="btn btn-primary" style="flex: 1;">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Thymeleaf：サーバーから選択日付をJavaScriptに渡す -->
     <script th:inline="javascript">
         /*<![CDATA[*/
