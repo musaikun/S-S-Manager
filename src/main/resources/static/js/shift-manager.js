@@ -5,8 +5,9 @@
 // ========================================
 
 // グローバル変数の拡張
-let currentView = 'calendar'; // 現在のビュー
-let timeCardsData = []; // 時間設定カードのデータ
+// 注意: customDialogResolveは既にcalendar.jsとtimeregister.jsで宣言されているので、ここでは宣言しない
+var currentView = 'calendar'; // 現在のビュー
+var timeCardsData = []; // 時間設定カードのデータ
 
 // ========================================
 // 初期化（DOMContentLoaded後に実行）
@@ -16,8 +17,30 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         initializeViewSwitching();
         updateProgressIndicator();
+        synchronizeNextButton();
     }, 100);
 });
+
+// nextBtn（ダミー）とnextToTimeBtn（実際のボタン）を同期
+function synchronizeNextButton() {
+    const dummyNextBtn = document.getElementById('nextBtn');
+    const realNextBtn = document.getElementById('nextToTimeBtn');
+
+    if (dummyNextBtn && realNextBtn) {
+        // MutationObserverでダミーボタンの変更を監視
+        const observer = new MutationObserver(() => {
+            realNextBtn.disabled = dummyNextBtn.disabled;
+        });
+
+        observer.observe(dummyNextBtn, {
+            attributes: true,
+            attributeFilter: ['disabled']
+        });
+
+        // 初期状態を同期
+        realNextBtn.disabled = dummyNextBtn.disabled;
+    }
+}
 
 // ========================================
 // ビュー切り替え機能
