@@ -190,11 +190,12 @@ body {
     margin-bottom: 20px;
 }
 
-/* 全日設定ボタンの色を他のボタンと統一 */
+/* 全日設定ボタンの色と枠線を他のボタンと統一 */
 .bulk-apply-buttons .btn-primary {
     background: white;
     color: #667eea;
     border: 2px solid #667eea;
+    border-radius: 8px;
 }
 
 .bulk-apply-buttons .btn-primary:hover {
@@ -219,7 +220,7 @@ body {
 
 .weekday-bulk-buttons-compact {
     display: flex;
-    gap: 1px;
+    gap: 2px;
     justify-content: space-between;
     flex-wrap: nowrap;
 }
@@ -227,11 +228,11 @@ body {
 .btn-weekday-compact {
     flex: 1;
     min-width: 0;
-    padding: 6px 1px;
-    font-size: 11px;
+    padding: 6px 0;
+    font-size: 10px;
     font-weight: 600;
     background: white;
-    border: 2px solid #e0e0e0;
+    border: 1px solid #e0e0e0;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;

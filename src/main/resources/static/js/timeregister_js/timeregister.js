@@ -7,6 +7,7 @@ let selectedStartHour = 9;
 let selectedStartMinute = 0;
 let selectedEndHour = 18;
 let selectedEndMinute = 0;
+let customDialogResolve = null; // カスタムダイアログのPromise resolve
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
@@ -38,30 +39,30 @@ function setupEventListeners() {
     });
     
     // 一括適用ボタン
-    document.getElementById('applyAllBtn').addEventListener('click', () => {
-        if (confirm('両方まとめて適用してもいいですか？')) {
+    document.getElementById('applyAllBtn').addEventListener('click', async () => {
+        if (await showCustomConfirm('両方まとめて適用してもいいですか？')) {
             applyBulk('both');
         }
     });
-    document.getElementById('applyStartBtn').addEventListener('click', () => {
-        if (confirm('開始時間のみ適用してもいいですか？')) {
+    document.getElementById('applyStartBtn').addEventListener('click', async () => {
+        if (await showCustomConfirm('開始時間のみ適用してもいいですか？')) {
             applyBulk('start');
         }
     });
-    document.getElementById('applyEndBtn').addEventListener('click', () => {
-        if (confirm('終了時間のみ適用してもいいですか？')) {
+    document.getElementById('applyEndBtn').addEventListener('click', async () => {
+        if (await showCustomConfirm('終了時間のみ適用してもいいですか？')) {
             applyBulk('end');
         }
     });
     
     // 曜日別適用 - セレクタを修正
     document.querySelectorAll('.btn-weekday-compact').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             const dayLabels = ['日', '月', '火', '水', '木', '金', '土'];
             const dayOfWeek = parseInt(btn.dataset.day);
             const dayLabel = dayLabels[dayOfWeek];
-            
-            if (confirm(`${dayLabel}曜日に適用してもいいですか？`)) {
+
+            if (await showCustomConfirm(`${dayLabel}曜日に適用してもいいですか？`)) {
                 applyToWeekday(dayOfWeek);
             }
         });
@@ -90,9 +91,9 @@ function setupEventListeners() {
         const cards = document.querySelectorAll('.time-card:not([data-removed="true"])');
 
         // 既存の時間パラメータをクリア
-        form.querySelectorAll('input[name="startTimes"], input[name="endTimes"]').forEach(input => input.remove());
+        form.querySelectorAll('input[name="startTimes"], input[name="endTimes"], input[name="modifiedDates"]').forEach(input => input.remove());
 
-        // 各カードの時間情報をフォームに追加
+        // 各カードの時間情報とmodified状態をフォームに追加
         cards.forEach(card => {
             const startTime = card.querySelector('.start-time-value').value;
             const endTime = card.querySelector('.end-time-value').value;
@@ -108,6 +109,16 @@ function setupEventListeners() {
             endInput.name = 'endTimes';
             endInput.value = endTime;
             form.appendChild(endInput);
+
+            // modified状態も保存
+            if (card.classList.contains('modified')) {
+                const date = card.querySelector('.date-value').value;
+                const modifiedInput = document.createElement('input');
+                modifiedInput.type = 'hidden';
+                modifiedInput.name = 'modifiedDates';
+                modifiedInput.value = date;
+                form.appendChild(modifiedInput);
+            }
         });
 
         form.submit();
@@ -147,6 +158,32 @@ function setupEventListeners() {
             }
         });
     }
+
+    // カスタムダイアログのイベントリスナー
+    document.getElementById('customDialogOk').addEventListener('click', () => {
+        if (customDialogResolve) {
+            customDialogResolve(true);
+            customDialogResolve = null;
+        }
+        hideCustomDialog();
+    });
+
+    document.getElementById('customDialogCancel').addEventListener('click', () => {
+        if (customDialogResolve) {
+            customDialogResolve(false);
+            customDialogResolve = null;
+        }
+        hideCustomDialog();
+    });
+
+    document.getElementById('customDialogClose').addEventListener('click', () => {
+        if (customDialogResolve) {
+            customDialogResolve(false);
+            customDialogResolve = null;
+        }
+        hideCustomDialog();
+    });
+}
     
     // オーバーレイのクリックで閉じる
     const helpOverlay = document.getElementById('helpOverlay');
@@ -467,10 +504,10 @@ function confirmTime() {
 }
 
 // シフトを外す
-function removeShift() {
+async function removeShift() {
     if (!currentModal || currentModal.type !== 'card') return;
-    
-    if (!confirm('この日のシフトを外しますか？')) {
+
+    if (!await showCustomConfirm('この日のシフトを外しますか？')) {
         return;
     }
     
@@ -744,16 +781,16 @@ function hideThreeChoiceDialog() {
 }
 
 // 3択の選択処理
-function handleThreeChoice(choice) {
+async function handleThreeChoice(choice) {
     if (!pendingBulkAction) {
         console.error('pendingBulkAction is null');
         hideThreeChoiceDialog();
         return;
     }
-    
+
     const type = pendingBulkAction.type;
     const target = pendingBulkAction.target;
-    
+
     if (choice === 'all') {
         if (target === 'all') {
             executeBulkApply(type, document.querySelectorAll('.time-card:not([data-removed="true"])'), true);
@@ -765,7 +802,7 @@ function handleThreeChoice(choice) {
         if (target === 'all') {
             const unmodifiedCards = document.querySelectorAll('.time-card:not(.modified):not([data-removed="true"])');
             if (unmodifiedCards.length === 0) {
-                alert('変更する日付がありません（全て個別設定済みです）');
+                await showCustomAlert('変更する日付がありません（全て個別設定済みです）');
                 hideThreeChoiceDialog();
                 return;
             }
@@ -774,7 +811,7 @@ function handleThreeChoice(choice) {
             const cards = pendingBulkAction.cards;
             const unmodifiedCards = Array.from(cards).filter(card => !card.classList.contains('modified'));
             if (unmodifiedCards.length === 0) {
-                alert('変更する日付がありません（全て個別設定済みです）');
+                await showCustomAlert('変更する日付がありません（全て個別設定済みです）');
                 hideThreeChoiceDialog();
                 return;
             }
@@ -810,14 +847,14 @@ function executeBulkApply(type, cards, clearModified) {
 }
 
 // 曜日別に適用
-function applyToWeekday(targetDayOfWeek) {
+async function applyToWeekday(targetDayOfWeek) {
     const targetCards = Array.from(document.querySelectorAll('.time-card:not([data-removed="true"])')).filter(card => {
         const dayOfWeek = parseInt(card.querySelector('.dayofweek-value').value);
         return dayOfWeek === targetDayOfWeek;
     });
-    
+
     if (targetCards.length === 0) {
-        alert('該当する曜日がありません');
+        await showCustomAlert('該当する曜日がありません');
         return;
     }
     
@@ -834,24 +871,33 @@ function applyToWeekday(targetDayOfWeek) {
 }
 
 // 確認ダイアログの表示
-function showConfirmDialog() {
+async function showConfirmDialog() {
     const confirmList = document.getElementById('confirmList');
     confirmList.innerHTML = '';
-    
+
     let totalMinutes = 0;
     let totalDays = 0;
-    
+
+    // 先にバリデーションチェック
+    for (const card of document.querySelectorAll('.time-card')) {
+        if (card.dataset.removed === 'true') continue;
+
+        const startTime = card.querySelector('.start-time-value').value;
+        const endTime = card.querySelector('.end-time-value').value;
+
+        if (!startTime || !endTime) {
+            await showCustomAlert('全ての日付に時間を設定してください');
+            return;
+        }
+    }
+
+    // ダイアログの内容を作成
     document.querySelectorAll('.time-card').forEach(card => {
         if (card.dataset.removed === 'true') return;
-        
+
         const dateText = card.querySelector('.card-date').textContent;
         const startTime = card.querySelector('.start-time-value').value;
         const endTime = card.querySelector('.end-time-value').value;
-        
-        if (!startTime || !endTime) {
-            alert('全ての日付に時間を設定してください');
-            return;
-        }
         
         const [startHour, startMin] = startTime.split(':').map(Number);
         const [endHour, endMin] = endTime.split(':').map(Number);
@@ -943,4 +989,27 @@ function submitShift() {
     
     document.body.appendChild(form);
     form.submit();
+}
+
+// カスタムダイアログ関数
+function showCustomConfirm(message) {
+    return new Promise((resolve) => {
+        customDialogResolve = resolve;
+        document.getElementById('customDialogMessage').textContent = message;
+        document.getElementById('customDialogCancel').style.display = 'block';
+        document.getElementById('customDialog').style.display = 'flex';
+    });
+}
+
+function showCustomAlert(message) {
+    return new Promise((resolve) => {
+        customDialogResolve = resolve;
+        document.getElementById('customDialogMessage').textContent = message;
+        document.getElementById('customDialogCancel').style.display = 'none';
+        document.getElementById('customDialog').style.display = 'flex';
+    });
+}
+
+function hideCustomDialog() {
+    document.getElementById('customDialog').style.display = 'none';
 }

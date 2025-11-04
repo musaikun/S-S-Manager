@@ -18,6 +18,7 @@ public class CalendarController {
 			@RequestParam(value = "removedDates", required = false) String removedDatesParam,
 			@RequestParam(value = "startTimes", required = false) List<String> startTimes,
 			@RequestParam(value = "endTimes", required = false) List<String> endTimes,
+			@RequestParam(value = "modifiedDates", required = false) List<String> modifiedDates,
 			Model model) {
 
 		// 前回選択されていた日付を保持するためのセット
@@ -39,10 +40,11 @@ public class CalendarController {
 			}
 		}
 
-		// モデルに選択日付と時間情報を追加
+		// モデルに選択日付と時間情報とmodified情報を追加
 		model.addAttribute("selectedDates", selectedDates);
 		model.addAttribute("startTimes", startTimes);
 		model.addAttribute("endTimes", endTimes);
+		model.addAttribute("modifiedDates", modifiedDates);
 
 		return "calendar_html/calendar"; // templates/calendar_html/calendar.html を返す
 	}

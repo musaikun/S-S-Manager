@@ -7,6 +7,7 @@ let savedTemplate = null;
 let previousMonthData = null;
 let savedStartTimes = []; // 保存された開始時間
 let savedEndTimes = [];   // 保存された終了時間
+let savedModifiedDates = []; // 保存されたmodified日付
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
@@ -42,6 +43,7 @@ function loadTimeDataFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     savedStartTimes = urlParams.getAll('startTimes');
     savedEndTimes = urlParams.getAll('endTimes');
+    savedModifiedDates = urlParams.getAll('modifiedDates');
 }
 
 // 外した日付を未選択状態にする
@@ -669,6 +671,13 @@ function submitShift() {
     if (savedEndTimes && savedEndTimes.length > 0) {
         savedEndTimes.forEach(time => {
             params.append('endTimes', time);
+        });
+    }
+
+    // 保存されたmodified情報も含める
+    if (savedModifiedDates && savedModifiedDates.length > 0) {
+        savedModifiedDates.forEach(date => {
+            params.append('modifiedDates', date);
         });
     }
 

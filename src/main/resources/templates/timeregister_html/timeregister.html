@@ -83,7 +83,7 @@
                 <p class="hint-text">※個別で設定した日は黄色で表示されます</p>
                 <div class="time-list-compact" id="timeList">
                     <!-- Thymeleafでループ -->
-                    <div class="time-card" th:each="dateInfo, stat : ${dateInfoList}" th:data-index="${stat.index}">
+                    <div class="time-card" th:each="dateInfo, stat : ${dateInfoList}" th:data-index="${stat.index}" th:classappend="${dateInfo.modified == 'true'} ? 'modified' : ''">
                         <input type="hidden" class="date-value" th:value="${dateInfo.date}">
                         <input type="hidden" class="dayofweek-value" th:value="${dateInfo.dayOfWeek}">
                         <input type="hidden" class="start-time-value" th:value="${dateInfo.startTime}">
@@ -279,6 +279,20 @@
         </div>
     </div>
     
+    <!-- 共通アラート/確認ダイアログ -->
+    <div id="customDialog" class="help-overlay" style="display: none;">
+        <div class="help-popup custom-dialog-popup">
+            <button class="help-close" id="customDialogClose">×</button>
+            <div class="help-content">
+                <p class="help-title" id="customDialogMessage">確認</p>
+                <div class="dialog-buttons" id="customDialogButtons" style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button id="customDialogCancel" class="btn btn-secondary" style="flex: 1;">キャンセル</button>
+                    <button id="customDialogOk" class="btn btn-primary" style="flex: 1;">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 確認ダイアログ -->
     <div id="confirmDialog" class="dialog-overlay">
         <div class="dialog dialog-large">

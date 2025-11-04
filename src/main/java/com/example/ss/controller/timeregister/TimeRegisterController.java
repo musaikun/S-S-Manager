@@ -27,6 +27,7 @@ public class TimeRegisterController {
             @RequestParam(value = "removedDates", required = false) String removedDatesParam,
             @RequestParam(value = "startTimes", required = false) List<String> startTimes,
             @RequestParam(value = "endTimes", required = false) List<String> endTimes,
+            @RequestParam(value = "modifiedDates", required = false) List<String> modifiedDates,
             Model model) {
 
         // 外されたシフト日付をセットに変換
@@ -64,6 +65,12 @@ public class TimeRegisterController {
             }
         }
 
+        // modified日付をセットに変換
+        Set<String> modifiedSet = new HashSet<>();
+        if (modifiedDates != null && !modifiedDates.isEmpty()) {
+            modifiedSet.addAll(modifiedDates);
+        }
+
         // 表示用の日付情報を作成
         List<Map<String, String>> dateInfoList = new ArrayList<>();
         for (LocalDate date : sortedDates) {
@@ -86,6 +93,9 @@ public class TimeRegisterController {
             // 時間情報を追加（保存されていれば使用、なければデフォルト）
             dateInfo.put("startTime", startTimeMap.getOrDefault(dateStr, "09:00"));
             dateInfo.put("endTime", endTimeMap.getOrDefault(dateStr, "18:00"));
+
+            // modified状態を追加
+            dateInfo.put("modified", modifiedSet.contains(dateStr) ? "true" : "false");
 
             dateInfoList.add(dateInfo);
         }
