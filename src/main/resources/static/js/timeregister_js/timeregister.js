@@ -85,7 +85,32 @@ function setupEventListeners() {
     
     // カレンダーに戻るボタン
     document.getElementById('backBtn').addEventListener('click', () => {
-        document.getElementById('backForm').submit();
+        // 現在の時間設定を保存してカレンダーに戻る
+        const form = document.getElementById('backForm');
+        const cards = document.querySelectorAll('.time-card:not([data-removed="true"])');
+
+        // 既存の時間パラメータをクリア
+        form.querySelectorAll('input[name="startTimes"], input[name="endTimes"]').forEach(input => input.remove());
+
+        // 各カードの時間情報をフォームに追加
+        cards.forEach(card => {
+            const startTime = card.querySelector('.start-time-value').value;
+            const endTime = card.querySelector('.end-time-value').value;
+
+            const startInput = document.createElement('input');
+            startInput.type = 'hidden';
+            startInput.name = 'startTimes';
+            startInput.value = startTime;
+            form.appendChild(startInput);
+
+            const endInput = document.createElement('input');
+            endInput.type = 'hidden';
+            endInput.name = 'endTimes';
+            endInput.value = endTime;
+            form.appendChild(endInput);
+        });
+
+        form.submit();
     });
     
     // 確認ダイアログ

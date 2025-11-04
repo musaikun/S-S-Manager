@@ -86,15 +86,15 @@
                     <div class="time-card" th:each="dateInfo, stat : ${dateInfoList}" th:data-index="${stat.index}">
                         <input type="hidden" class="date-value" th:value="${dateInfo.date}">
                         <input type="hidden" class="dayofweek-value" th:value="${dateInfo.dayOfWeek}">
-                        <input type="hidden" class="start-time-value" value="09:00">
-                        <input type="hidden" class="end-time-value" value="18:00">
-                        
+                        <input type="hidden" class="start-time-value" th:value="${dateInfo.startTime}">
+                        <input type="hidden" class="end-time-value" th:value="${dateInfo.endTime}">
+
                         <div class="card-content-horizontal">
                             <div class="card-date" th:text="${dateInfo.displayDate}">11/15(金)</div>
                             <div class="card-time-section">
-                                <span class="time-value start-display">09:00</span>
+                                <span class="time-value start-display" th:text="${dateInfo.startTime}">09:00</span>
                                 <span class="time-separator">～</span>
-                                <span class="time-value end-display">18:00</span>
+                                <span class="time-value end-display" th:text="${dateInfo.endTime}">18:00</span>
                             </div>
                         </div>
                         <div class="card-hours">
@@ -174,7 +174,11 @@
             </div>
             
             <form id="backForm" th:action="@{/}" method="get" style="display: none;">
-                <input type="hidden" name="selectedDates" th:value="${#strings.listJoin(dateInfoList.![date], ',')}">
+                <!-- 日付情報 -->
+                <th:block th:each="dateInfo : ${dateInfoList}">
+                    <input type="hidden" name="dates" th:value="${dateInfo.date}">
+                </th:block>
+                <!-- 時間情報はJavaScriptで動的に追加 -->
             </form>
         </div>
     </div>

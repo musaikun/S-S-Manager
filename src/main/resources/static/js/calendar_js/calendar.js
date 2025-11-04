@@ -5,11 +5,14 @@ let selectedDates = new Set();
 let holidays = {};
 let savedTemplate = null;
 let previousMonthData = null;
+let savedStartTimes = []; // 保存された開始時間
+let savedEndTimes = [];   // 保存された終了時間
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
     initializeSelectors();
     loadSelectedDatesFromUrl(); // URL パラメータから選択状態を復元
+    loadTimeDataFromUrl();      // URL パラメータから時間情報を復元
     removeUnselectedDates();    // 外した日付を未選択状態にする
     loadHolidays().then(() => {
         // 祝日データ読み込み完了後にカレンダーを描画
@@ -23,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function loadSelectedDatesFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     const dates = urlParams.get('selectedDates');
-    
+
     if (dates) {
         const dateArray = dates.split(',');
         dateArray.forEach(date => {
@@ -32,6 +35,13 @@ function loadSelectedDatesFromUrl() {
             }
         });
     }
+}
+
+// URLパラメータから時間情報を復元
+function loadTimeDataFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    savedStartTimes = urlParams.getAll('startTimes');
+    savedEndTimes = urlParams.getAll('endTimes');
 }
 
 // 外した日付を未選択状態にする
@@ -644,10 +654,23 @@ function submitShift() {
     // 選択した日付を時間設定画面に渡す
     const sortedDates = Array.from(selectedDates).sort();
     const params = new URLSearchParams();
-    
+
     sortedDates.forEach(dateStr => {
         params.append('dates', dateStr);
     });
-    
+
+    // 保存された時間情報も含める
+    if (savedStartTimes && savedStartTimes.length > 0) {
+        savedStartTimes.forEach(time => {
+            params.append('startTimes', time);
+        });
+    }
+
+    if (savedEndTimes && savedEndTimes.length > 0) {
+        savedEndTimes.forEach(time => {
+            params.append('endTimes', time);
+        });
+    }
+
     window.location.href = '/time-register?' + params.toString();
 }

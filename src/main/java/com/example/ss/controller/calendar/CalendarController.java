@@ -16,16 +16,18 @@ public class CalendarController {
 	public String showCalendar(
 			@RequestParam(value = "dates", required = false) List<String> dates,
 			@RequestParam(value = "removedDates", required = false) String removedDatesParam,
+			@RequestParam(value = "startTimes", required = false) List<String> startTimes,
+			@RequestParam(value = "endTimes", required = false) List<String> endTimes,
 			Model model) {
-		
+
 		// 前回選択されていた日付を保持するためのセット
 		Set<String> selectedDates = new HashSet<>();
-		
+
 		// URLパラメータから日付を復元
 		if (dates != null && !dates.isEmpty()) {
 			selectedDates.addAll(dates);
 		}
-		
+
 		// 外されたシフト日付を除外
 		if (removedDatesParam != null && !removedDatesParam.isEmpty()) {
 			String[] removedArray = removedDatesParam.split(",");
@@ -36,10 +38,12 @@ public class CalendarController {
 				}
 			}
 		}
-		
-		// モデルに選択日付を追加
+
+		// モデルに選択日付と時間情報を追加
 		model.addAttribute("selectedDates", selectedDates);
-		
+		model.addAttribute("startTimes", startTimes);
+		model.addAttribute("endTimes", endTimes);
+
 		return "calendar_html/calendar"; // templates/calendar_html/calendar.html を返す
 	}
 
