@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>勤務日カレンダー</title>
+    <link rel="stylesheet" href="css/calendar.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1 class="title">勤務日カレンダー</h1>
+            
+            <!-- 操作セクション -->
+            <div class="controls">
+                <div class="month-selector">
+                    <button id="thisMonthBtn" class="btn-month active">今月</button>
+                    <button id="nextMonthBtn" class="btn-month">来月</button>
+                </div>
+                
+                <div class="button-group">
+                    <button id="selectAllBtn" class="btn-action">全日選択</button>
+                    <button id="clearAllBtn" class="btn btn-secondary">選択をすべてクリア</button>
+                </div>
+                
+                <div class="weekday-buttons">
+                    <button class="btn-weekday btn-sun" data-day="0">日</button>
+                    <button class="btn-weekday" data-day="1">月</button>
+                    <button class="btn-weekday" data-day="2">火</button>
+                    <button class="btn-weekday" data-day="3">水</button>
+                    <button class="btn-weekday" data-day="4">木</button>
+                    <button class="btn-weekday" data-day="5">金</button>
+                    <button class="btn-weekday btn-sat" data-day="6">土</button>
+                </div>
+            </div>
+            
+            <!-- カレンダーグリッド -->
+            <div class="calendar-wrapper">
+                <div class="calendar-header">
+                    <div class="day-name sun">日</div>
+                    <div class="day-name">月</div>
+                    <div class="day-name">火</div>
+                    <div class="day-name">水</div>
+                    <div class="day-name">木</div>
+                    <div class="day-name">金</div>
+                    <div class="day-name sat">土</div>
+                </div>
+                <div id="calendarGrid" class="calendar-grid"></div>
+            </div>
+            
+            <!-- 選択リスト -->
+            <div class="selection-section">
+                <div class="selection-content">
+                    <div class="total-days">
+                        合計勤務日数: <span id="totalDays">0</span>日
+                    </div>
+                    <button id="nextBtn" class="btn btn-next" disabled>時間設定へ進む →</button>
+                </div>
+                <div class="month-info">
+                    <span id="monthInfo">11月の平日は20日、休日は10日です</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 確認ダイアログ -->
+    <div id="confirmDialog" class="dialog-overlay">
+        <div class="dialog">
+            <h3>確認</h3>
+            <p>すべての選択をクリアしますか？</p>
+            <div class="dialog-buttons">
+                <button id="confirmYes" class="btn btn-primary">はい</button>
+                <button id="confirmNo" class="btn btn-secondary">いいえ</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 提出確認ダイアログ -->
+    <div id="submitConfirmDialog" class="dialog-overlay">
+        <div class="dialog dialog-large">
+            <h3>選択内容の確認</h3>
+            <p class="confirm-message">以下の日付で時間設定に進みますか？</p>
+            <div class="confirm-calendar-preview">
+                <div class="confirm-month" id="confirmMonth"></div>
+                <div class="confirm-grid" id="confirmGrid"></div>
+            </div>
+            <div class="confirm-total">
+                合計勤務日数: <span id="confirmTotalDays">0</span>日
+            </div>
+            <div class="dialog-buttons">
+                <button id="submitNo" class="btn btn-secondary">修正する</button>
+                <button id="submitYes" class="btn btn-primary btn-large">時間設定へ進む →</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- テンプレート保存ダイアログ -->
+    <div id="templateSaveDialog" class="dialog-overlay">
+        <div class="dialog">
+            <h3>テンプレート保存</h3>
+            <p>現在の選択をテンプレートとして保存しますか？</p>
+            <p class="dialog-note">※次回以降、この選択パターンを簡単に読み込めます</p>
+            <div class="dialog-buttons">
+                <button id="templateSaveYes" class="btn btn-primary">保存</button>
+                <button id="templateSaveNo" class="btn btn-secondary">キャンセル</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Thymeleaf：サーバーから選択日付をJavaScriptに渡す -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // サーバーから送信された選択日付を取得
+        const serverSelectedDates = /*[[${selectedDates}]]*/ [];
+        
+        // ページ読み込み完了後にselectedDatesに追加
+        document.addEventListener('DOMContentLoaded', function() {
+            if (serverSelectedDates && serverSelectedDates.length > 0) {
+                serverSelectedDates.forEach(date => {
+                    if (date) {
+                        selectedDates.add(date);
+                    }
+                });
+                // 選択状態を再描画
+                renderCalendar();
+            }
+        });
+        /*]]>*/
+    </script>
+
+    <script src="js/calendar.js"></script>
+
+    <!-- 著作権表示 -->
+    <footer style="text-align: center; margin-top: 2rem; padding: 1rem 0; color: #666; font-size: 0.875rem;">
+        © 2025 無才 / S×S Manager
+    </footer>
+</body>
+</html>

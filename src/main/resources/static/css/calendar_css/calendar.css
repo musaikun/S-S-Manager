@@ -1,0 +1,643 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.title {
+    text-align: center;
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+/* 操作セクション */
+.controls {
+    margin-bottom: 30px;
+}
+
+.month-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.btn-month {
+    padding: 12px 32px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #666;
+}
+
+.btn-month:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+}
+
+.btn-month.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-month:active {
+    transform: scale(0.95);
+}
+
+.template-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-template {
+    background: #f7fafc;
+    color: #2d3748;
+    border: 2px solid #e2e8f0;
+    font-size: 14px;
+    padding: 10px 16px;
+}
+
+.btn-template:hover:not(:disabled) {
+    background: #edf2f7;
+    border-color: #cbd5e0;
+}
+
+.btn-template:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.select-input {
+    padding: 10px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.select-input:hover {
+    border-color: #667eea;
+}
+
+.select-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn-action {
+    padding: 12px 24px;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    background: white;
+    color: #667eea;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-action:hover {
+    background: #f8f9ff;
+    border-color: #5568d3;
+}
+
+.btn-action:active {
+    transform: scale(0.95);
+}
+
+.btn-action.selected {
+    background: #48bb78;
+    color: white;
+    border-color: #48bb78;
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+    border: 2px solid #667eea;
+}
+
+.btn-primary:hover {
+    background: #5568d3;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+.weekday-buttons {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    max-width: 100%;
+}
+
+.btn-weekday {
+    padding: 10px 8px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-weekday:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+    transform: translateY(-2px);
+}
+
+.btn-weekday:active {
+    transform: scale(0.95);
+}
+
+.btn-weekday.selected {
+    background: #48bb78;
+    color: white;
+    border-color: #48bb78;
+    box-shadow: 0 2px 8px rgba(72, 187, 120, 0.4);
+}
+
+.btn-sun {
+    color: #e53e3e;
+    border-color: #e53e3e;
+}
+
+.btn-sun:hover {
+    background: #fff5f5;
+    border-color: #e53e3e;
+}
+
+.btn-sun.selected {
+    background: #48bb78;
+    color: white;
+    border-color: #48bb78;
+}
+
+.btn-sat {
+    color: #3182ce;
+    border-color: #3182ce;
+}
+
+.btn-sat:hover {
+    background: #ebf8ff;
+    border-color: #3182ce;
+}
+
+.btn-sat.selected {
+    background: #48bb78;
+    color: white;
+    border-color: #48bb78;
+}
+
+/* カレンダー */
+.calendar-wrapper {
+    margin-bottom: 30px;
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.day-name {
+    text-align: center;
+    font-weight: 600;
+    padding: 10px;
+    color: #333;
+    font-size: 14px;
+}
+
+.day-name.sun {
+    color: #e53e3e;
+}
+
+.day-name.sat {
+    color: #3182ce;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.day-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    border: 2px solid transparent;
+}
+
+.day-cell:hover:not(.disabled):not(.empty) {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: #667eea;
+}
+
+.day-cell.sunday {
+    color: #e53e3e;
+}
+
+.day-cell.saturday {
+    color: #3182ce;
+}
+
+.day-cell.holiday {
+    color: #e53e3e;
+    font-weight: 700;
+}
+
+.day-cell.selected {
+    background: #48bb78;
+    color: white;
+    border-color: #48bb78;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+.day-cell.disabled {
+    color: #cbd5e0;
+    cursor: not-allowed;
+    background: #f7fafc;
+}
+
+.day-cell.empty {
+    background: transparent;
+    cursor: default;
+}
+
+/* 選択リスト */
+.selection-section {
+    border-top: 2px solid #e0e0e0;
+    padding-top: 30px;
+}
+
+.selection-content {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.total-days {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.total-days span {
+    color: #667eea;
+    font-size: 24px;
+}
+
+.month-info {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    padding: 10px;
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    border-radius: 4px;
+}
+
+.btn-next {
+    background: #48bb78;
+    color: white;
+    padding: 15px 30px;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.btn-next:hover:not(:disabled) {
+    background: #38a169;
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+.btn-next:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* 確認ダイアログ */
+.dialog-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.dialog-overlay.show {
+    display: flex;
+}
+
+.dialog {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+}
+
+.dialog-large {
+    max-width: 600px;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dialog h3 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.dialog p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.dialog-note {
+    font-size: 14px;
+    color: #999;
+    margin-top: -10px;
+}
+
+.confirm-message {
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.confirm-calendar-preview {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.confirm-month {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #2d3748;
+}
+
+.confirm-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.confirm-weekday {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #333;
+    padding: 6px 0;
+}
+
+.confirm-weekday.sunday-header {
+    color: #e53e3e;
+}
+
+.confirm-weekday.saturday-header {
+    color: #3182ce;
+}
+
+.confirm-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    background: white;
+    border: 1px solid #e2e8f0;
+}
+
+.confirm-day.selected {
+    background: #48bb78;
+    color: white;
+    font-weight: 700;
+    border-color: #48bb78;
+}
+
+.confirm-day.sunday {
+    color: #e53e3e;
+}
+
+.confirm-day.saturday {
+    color: #3182ce;
+}
+
+.confirm-day.holiday {
+    color: #e53e3e;
+}
+
+.confirm-day.disabled {
+    color: #cbd5e0;
+    background: #f7fafc;
+}
+
+.confirm-day.empty {
+    background: transparent;
+    border: none;
+}
+
+.confirm-total {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.confirm-total span {
+    color: #667eea;
+    font-size: 28px;
+}
+
+.dialog-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btn-large {
+    font-size: 18px;
+    padding: 14px 28px;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+    .card {
+        padding: 20px;
+    }
+    
+    .title {
+        font-size: 24px;
+    }
+    
+    .day-cell {
+        font-size: 14px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+    
+    .calendar-grid {
+        gap: 4px;
+    }
+    
+    .calendar-header {
+        gap: 4px;
+    }
+    
+    .selection-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn-next {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    .card {
+        padding: 15px;
+    }
+    
+    .title {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .day-cell {
+        font-size: 12px;
+    }
+    
+    .day-name {
+        font-size: 12px;
+        padding: 8px;
+    }
+}
