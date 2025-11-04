@@ -40,7 +40,7 @@ public class CalendarController {
 		// モデルに選択日付を追加
 		model.addAttribute("selectedDates", selectedDates);
 		
-		return "index"; // templates/index.html を返す
+		return "calendar_html/calendar"; // templates/calendar_html/calendar.html を返す
 	}
 
 }

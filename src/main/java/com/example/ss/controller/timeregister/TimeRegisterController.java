@@ -76,7 +76,7 @@ public class TimeRegisterController {
         model.addAttribute("dateInfoList", dateInfoList);
         model.addAttribute("totalDays", dateInfoList.size());
 
-        return "TimeRegister";
+        return "timeregister_html/timeregister";
     }
 
     @PostMapping("/time-register/submit")
