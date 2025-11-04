@@ -27,28 +27,33 @@ function setupEventListeners() {
             accordion.classList.toggle('open');
         });
     }
-    
-    // 一括設定の時間ボタン
-    document.getElementById('bulkStartTimeBtn').addEventListener('click', () => {
+
+    // 一括設定の時間ボタン (存在する場合のみ)
+    const bulkStartTimeBtn = document.getElementById('bulkStartTimeBtn');
+    if (bulkStartTimeBtn) bulkStartTimeBtn.addEventListener('click', () => {
         openBulkTimePicker('start');
     });
-    
-    document.getElementById('bulkEndTimeBtn').addEventListener('click', () => {
+
+    const bulkEndTimeBtn = document.getElementById('bulkEndTimeBtn');
+    if (bulkEndTimeBtn) bulkEndTimeBtn.addEventListener('click', () => {
         openBulkTimePicker('end');
     });
-    
-    // 一括適用ボタン
-    document.getElementById('applyAllBtn').addEventListener('click', async () => {
+
+    // 一括適用ボタン (存在する場合のみ)
+    const applyAllBtn = document.getElementById('applyAllBtn');
+    if (applyAllBtn) applyAllBtn.addEventListener('click', async () => {
         if (await showCustomConfirm('両方まとめて適用してもいいですか？')) {
             applyBulk('both');
         }
     });
-    document.getElementById('applyStartBtn').addEventListener('click', async () => {
+    const applyStartBtn = document.getElementById('applyStartBtn');
+    if (applyStartBtn) applyStartBtn.addEventListener('click', async () => {
         if (await showCustomConfirm('開始時間のみ適用してもいいですか？')) {
             applyBulk('start');
         }
     });
-    document.getElementById('applyEndBtn').addEventListener('click', async () => {
+    const applyEndBtn = document.getElementById('applyEndBtn');
+    if (applyEndBtn) applyEndBtn.addEventListener('click', async () => {
         if (await showCustomConfirm('終了時間のみ適用してもいいですか？')) {
             applyBulk('end');
         }
@@ -75,16 +80,21 @@ function setupEventListeners() {
         });
     });
     
-    // 3択ダイアログ
-    document.getElementById('choiceModifiedOnly').addEventListener('click', () => handleThreeChoice('modifiedOnly'));
-    document.getElementById('choiceAll').addEventListener('click', () => handleThreeChoice('all'));
-    document.getElementById('choiceCancel').addEventListener('click', hideThreeChoiceDialog);
-    
-    // 提出ボタン
-    document.getElementById('submitBtn').addEventListener('click', showConfirmDialog);
-    
-    // カレンダーに戻るボタン
-    document.getElementById('backBtn').addEventListener('click', () => {
+    // 3択ダイアログ (存在する場合のみ)
+    const choiceModifiedOnly = document.getElementById('choiceModifiedOnly');
+    if (choiceModifiedOnly) choiceModifiedOnly.addEventListener('click', () => handleThreeChoice('modifiedOnly'));
+    const choiceAll = document.getElementById('choiceAll');
+    if (choiceAll) choiceAll.addEventListener('click', () => handleThreeChoice('all'));
+    const choiceCancel = document.getElementById('choiceCancel');
+    if (choiceCancel) choiceCancel.addEventListener('click', hideThreeChoiceDialog);
+
+    // 提出ボタン (存在する場合のみ)
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) submitBtn.addEventListener('click', showConfirmDialog);
+
+    // カレンダーに戻るボタン (存在する場合のみ)
+    const backBtn = document.getElementById('backBtn');
+    if (backBtn) backBtn.addEventListener('click', () => {
         // 現在の時間設定を保存してカレンダーに戻る
         const form = document.getElementById('backForm');
         const cards = document.querySelectorAll('.time-card:not([data-removed="true"])');
@@ -122,10 +132,13 @@ function setupEventListeners() {
 
         form.submit();
     });
-    
-    // 確認ダイアログ
-    document.getElementById('cancelSubmit').addEventListener('click', hideConfirmDialog);
-    document.getElementById('finalSubmit').addEventListener('click', submitShift);
+
+
+    // 確認ダイアログ (存在する場合のみ)
+    const cancelSubmit = document.getElementById('cancelSubmit');
+    if (cancelSubmit) cancelSubmit.addEventListener('click', hideConfirmDialog);
+    const finalSubmit = document.getElementById('finalSubmit');
+    if (finalSubmit) finalSubmit.addEventListener('click', submitShift);
     
     // 休憩チェックボックス
     const breakCheckbox = document.getElementById('breakCheckbox');
@@ -199,29 +212,35 @@ function setupEventListeners() {
 
 // タイムピッカーの初期化
 function initializeTimePicker() {
-    // スライド式トグルスイッチ
-    document.getElementById('startPeriodToggle').addEventListener('change', (e) => {
+    // スライド式トグルスイッチ (存在する場合のみ)
+    const startPeriodToggle = document.getElementById('startPeriodToggle');
+    if (startPeriodToggle) startPeriodToggle.addEventListener('change', (e) => {
         const period = e.target.checked ? 'pm' : 'am';
         updateHourButtons('start', period);
     });
-    
-    document.getElementById('endPeriodToggle').addEventListener('change', (e) => {
+
+    const endPeriodToggle = document.getElementById('endPeriodToggle');
+    if (endPeriodToggle) endPeriodToggle.addEventListener('change', (e) => {
         const period = e.target.checked ? 'pm' : 'am';
         updateHourButtons('end', period);
     });
-    
-    // キャンセルボタン
-    document.getElementById('modalCancel').addEventListener('click', closeTimePicker);
-    
-    // 設定するボタン
-    document.getElementById('modalConfirm').addEventListener('click', confirmTime);
-    
-    // シフトを外すボタン
-    document.getElementById('removeShiftBtn').addEventListener('click', removeShift);
-    
-    // オーバーレイクリックで閉じる
+
+    // キャンセルボタン (存在する場合のみ)
+    const modalCancel = document.getElementById('modalCancel');
+    if (modalCancel) modalCancel.addEventListener('click', closeTimePicker);
+
+    // 設定するボタン (存在する場合のみ)
+    const modalConfirm = document.getElementById('modalConfirm');
+    if (modalConfirm) modalConfirm.addEventListener('click', confirmTime);
+
+    // シフトを外すボタン (存在する場合のみ)
+    const removeShiftBtn = document.getElementById('removeShiftBtn');
+    if (removeShiftBtn) removeShiftBtn.addEventListener('click', removeShift);
+
+
+    // オーバーレイクリックで閉じる (存在する場合のみ)
     const modal = document.getElementById('timePickerModal');
-    modal.addEventListener('click', (e) => {
+    if (modal) modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeTimePicker();
         }
