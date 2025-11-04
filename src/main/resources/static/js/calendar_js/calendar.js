@@ -8,7 +8,6 @@ let previousMonthData = null;
 let savedStartTimes = []; // 保存された開始時間
 let savedEndTimes = [];   // 保存された終了時間
 let savedModifiedDates = []; // 保存されたmodified日付
-var customDialogResolve = null; // カスタムダイアログのPromise resolve (varで宣言して重複を回避)
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {

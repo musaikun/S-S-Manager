@@ -5,7 +5,7 @@
 // ========================================
 
 // グローバル変数の拡張
-// 注意: customDialogResolveは既にcalendar.jsとtimeregister.jsで宣言されているので、ここでは宣言しない
+var customDialogResolve = null; // カスタムダイアログのPromise resolve（ここで一度だけ宣言）
 var currentView = 'calendar'; // 現在のビュー
 var timeCardsData = []; // 時間設定カードのデータ
 

@@ -7,7 +7,6 @@ let selectedStartHour = 9;
 let selectedStartMinute = 0;
 let selectedEndHour = 18;
 let selectedEndMinute = 0;
-var customDialogResolve = null; // カスタムダイアログのPromise resolve (varで宣言して重複を回避)
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
