@@ -183,8 +183,7 @@ function setupEventListeners() {
         }
         hideCustomDialog();
     });
-}
-    
+
     // オーバーレイのクリックで閉じる
     const helpOverlay = document.getElementById('helpOverlay');
     if (helpOverlay) {
