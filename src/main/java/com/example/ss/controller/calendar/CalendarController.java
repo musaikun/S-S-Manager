@@ -49,4 +49,10 @@ public class CalendarController {
 		return "calendar_html/calendar"; // templates/calendar_html/calendar.html を返す
 	}
 
+	@GetMapping("/shift-manager")
+	public String showShiftManager(Model model) {
+		// 統合ビュー（カレンダー + 時間設定）を表示
+		return "shift-manager"; // templates/shift-manager.html を返す
+	}
+
 }
