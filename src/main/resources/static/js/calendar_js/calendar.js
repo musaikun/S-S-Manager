@@ -8,7 +8,6 @@ let previousMonthData = null;
 let savedStartTimes = []; // 保存された開始時間
 let savedEndTimes = [];   // 保存された終了時間
 let savedModifiedDates = []; // 保存されたmodified日付
-let customDialogResolve = null; // カスタムダイアログのPromise resolve
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
@@ -229,6 +228,7 @@ function updateMonthInfo() {
 // 次へボタンの状態更新
 function updateNextButton() {
     const nextBtn = document.getElementById('nextBtn');
+    if (!nextBtn) return; // 存在しない場合は何もしない
     if (selectedDates.size === 0) {
         nextBtn.disabled = true;
     } else {
@@ -318,20 +318,26 @@ function setupEventListeners() {
             selectByWeekday(dayOfWeek);
         });
     });
-    
-    // 確認ダイアログ
-    document.getElementById('confirmYes').addEventListener('click', clearAllDates);
-    document.getElementById('confirmNo').addEventListener('click', hideConfirmDialog);
-    
-    // 提出確認ダイアログ
-    document.getElementById('submitYes').addEventListener('click', submitShift);
-    document.getElementById('submitNo').addEventListener('click', hideSubmitConfirmDialog);
-    
-    // 次へボタン
-    document.getElementById('nextBtn').addEventListener('click', showSubmitConfirmDialog);
+
+    // 確認ダイアログ (存在する場合のみ)
+    const confirmYes = document.getElementById('confirmYes');
+    const confirmNo = document.getElementById('confirmNo');
+    if (confirmYes) confirmYes.addEventListener('click', clearAllDates);
+    if (confirmNo) confirmNo.addEventListener('click', hideConfirmDialog);
+
+    // 提出確認ダイアログ (存在する場合のみ)
+    const submitYes = document.getElementById('submitYes');
+    const submitNo = document.getElementById('submitNo');
+    if (submitYes) submitYes.addEventListener('click', submitShift);
+    if (submitNo) submitNo.addEventListener('click', hideSubmitConfirmDialog);
+
+    // 次へボタン (存在する場合のみ)
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) nextBtn.addEventListener('click', showSubmitConfirmDialog);
 
     // カスタムダイアログのイベントリスナー
-    document.getElementById('customDialogOk').addEventListener('click', () => {
+    const customDialogOk = document.getElementById('customDialogOk');
+    if (customDialogOk) customDialogOk.addEventListener('click', () => {
         if (customDialogResolve) {
             customDialogResolve(true);
             customDialogResolve = null;
@@ -339,7 +345,8 @@ function setupEventListeners() {
         hideCustomDialog();
     });
 
-    document.getElementById('customDialogCancel').addEventListener('click', () => {
+    const customDialogCancel = document.getElementById('customDialogCancel');
+    if (customDialogCancel) customDialogCancel.addEventListener('click', () => {
         if (customDialogResolve) {
             customDialogResolve(false);
             customDialogResolve = null;
@@ -347,7 +354,8 @@ function setupEventListeners() {
         hideCustomDialog();
     });
 
-    document.getElementById('customDialogClose').addEventListener('click', () => {
+    const customDialogClose = document.getElementById('customDialogClose');
+    if (customDialogClose) customDialogClose.addEventListener('click', () => {
         if (customDialogResolve) {
             customDialogResolve(false);
             customDialogResolve = null;
