@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>S×S Manager</title>
-  <link rel="stylesheet" href="/TestMock/TestCss/glass_reflect.css">
+  <link rel="stylesheet" th:href="@{/index.css}">
 </head>
 <body>
   <!-- タイトルを3つに分割 -->
@@ -27,6 +27,11 @@
   </div>
 
   <!-- JS -->
-  <script src="/TestMock/TestJs/glass_reflect.js"></script>
+  <script th:src="@{/index.js}"></script>
+
+  <!-- 著作権表示 -->
+  <footer style="text-align: center; margin-top: 2rem; padding: 1rem 0; color: white; font-size: 0.875rem;">
+    © 2025 無才 / S×S Manager
+  </footer>
 </body>
 </html>

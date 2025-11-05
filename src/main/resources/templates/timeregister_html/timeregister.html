@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>勤務時間設定</title>
-    <link rel="stylesheet" th:href="@{/css/TimeRegister.css}">
+    <link rel="stylesheet" th:href="@{/css/timeregister_css/timeregister.css}">
 </head>
 <body>
     <div class="container">
@@ -83,18 +83,18 @@
                 <p class="hint-text">※個別で設定した日は黄色で表示されます</p>
                 <div class="time-list-compact" id="timeList">
                     <!-- Thymeleafでループ -->
-                    <div class="time-card" th:each="dateInfo, stat : ${dateInfoList}" th:data-index="${stat.index}">
+                    <div class="time-card" th:each="dateInfo, stat : ${dateInfoList}" th:data-index="${stat.index}" th:classappend="${dateInfo.modified == 'true'} ? 'modified' : ''">
                         <input type="hidden" class="date-value" th:value="${dateInfo.date}">
                         <input type="hidden" class="dayofweek-value" th:value="${dateInfo.dayOfWeek}">
-                        <input type="hidden" class="start-time-value" value="09:00">
-                        <input type="hidden" class="end-time-value" value="18:00">
-                        
+                        <input type="hidden" class="start-time-value" th:value="${dateInfo.startTime}">
+                        <input type="hidden" class="end-time-value" th:value="${dateInfo.endTime}">
+
                         <div class="card-content-horizontal">
                             <div class="card-date" th:text="${dateInfo.displayDate}">11/15(金)</div>
                             <div class="card-time-section">
-                                <span class="time-value start-display">09:00</span>
+                                <span class="time-value start-display" th:text="${dateInfo.startTime}">09:00</span>
                                 <span class="time-separator">～</span>
-                                <span class="time-value end-display">18:00</span>
+                                <span class="time-value end-display" th:text="${dateInfo.endTime}">18:00</span>
                             </div>
                         </div>
                         <div class="card-hours">
@@ -174,7 +174,11 @@
             </div>
             
             <form id="backForm" th:action="@{/}" method="get" style="display: none;">
-                <input type="hidden" name="selectedDates" th:value="${#strings.listJoin(dateInfoList.![date], ',')}">
+                <!-- 日付情報 -->
+                <th:block th:each="dateInfo : ${dateInfoList}">
+                    <input type="hidden" name="dates" th:value="${dateInfo.date}">
+                </th:block>
+                <!-- 時間情報はJavaScriptで動的に追加 -->
             </form>
         </div>
     </div>
@@ -186,16 +190,17 @@
             
             <!-- 開始時間 -->
             <div class="modal-section">
-                <label class="modal-label">開始時間</label>
-                
-                <!-- スライド式トグル -->
-                <div class="toggle-switch">
-                    <input type="checkbox" id="startPeriodToggle" class="toggle-input">
-                    <label for="startPeriodToggle" class="toggle-label">
-                        <span class="toggle-text-am">午前</span>
-                        <span class="toggle-text-pm">午後</span>
-                        <span class="toggle-slider"></span>
-                    </label>
+                <div class="modal-section-header">
+                    <label class="modal-label" style="margin-bottom: 0;">開始時間</label>
+                    <!-- スライド式トグル -->
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="startPeriodToggle" class="toggle-input">
+                        <label for="startPeriodToggle" class="toggle-label">
+                            <span class="toggle-text-am">午前</span>
+                            <span class="toggle-text-pm">午後</span>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
                 </div>
                 
                 <!-- 時間選択 -->
@@ -218,16 +223,17 @@
             
             <!-- 終了時間 -->
             <div class="modal-section">
-                <label class="modal-label">終了時間</label>
-                
-                <!-- スライド式トグル -->
-                <div class="toggle-switch">
-                    <input type="checkbox" id="endPeriodToggle" class="toggle-input" checked>
-                    <label for="endPeriodToggle" class="toggle-label">
-                        <span class="toggle-text-am">午前</span>
-                        <span class="toggle-text-pm">午後</span>
-                        <span class="toggle-slider"></span>
-                    </label>
+                <div class="modal-section-header">
+                    <label class="modal-label" style="margin-bottom: 0;">終了時間</label>
+                    <!-- スライド式トグル -->
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="endPeriodToggle" class="toggle-input" checked>
+                        <label for="endPeriodToggle" class="toggle-label">
+                            <span class="toggle-text-am">午前</span>
+                            <span class="toggle-text-pm">午後</span>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
                 </div>
                 
                 <!-- 時間選択 -->
@@ -275,6 +281,20 @@
         </div>
     </div>
     
+    <!-- 共通アラート/確認ダイアログ -->
+    <div id="customDialog" class="help-overlay" style="display: none;">
+        <div class="help-popup custom-dialog-popup">
+            <button class="help-close" id="customDialogClose">×</button>
+            <div class="help-content">
+                <p class="help-title" id="customDialogMessage">確認</p>
+                <div class="dialog-buttons" id="customDialogButtons" style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button id="customDialogCancel" class="btn btn-secondary" style="flex: 1;">キャンセル</button>
+                    <button id="customDialogOk" class="btn btn-primary" style="flex: 1;">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 確認ダイアログ -->
     <div id="confirmDialog" class="dialog-overlay">
         <div class="dialog dialog-large">
@@ -309,6 +329,6 @@
         const selectedDates = /*[[${dateInfoList}]]*/ [];
         /*]]>*/
     </script>
-    <script th:src="@{/js/TimeRegister.js}"></script>
+    <script th:src="@{/js/timeregister_js/timeregister.js}"></script>
 </body>
 </html>

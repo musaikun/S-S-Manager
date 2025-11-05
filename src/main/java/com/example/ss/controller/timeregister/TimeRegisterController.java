@@ -25,6 +25,9 @@ public class TimeRegisterController {
     public String showTimeRegister(
             @RequestParam("dates") List<String> dates,
             @RequestParam(value = "removedDates", required = false) String removedDatesParam,
+            @RequestParam(value = "startTimes", required = false) List<String> startTimes,
+            @RequestParam(value = "endTimes", required = false) List<String> endTimes,
+            @RequestParam(value = "modifiedDates", required = false) List<String> modifiedDates,
             Model model) {
 
         // 外されたシフト日付をセットに変換
@@ -51,11 +54,29 @@ public class TimeRegisterController {
         }
         sortedDates.sort(LocalDate::compareTo);
 
+        // 時間情報のマップを作成（日付をキーとする）
+        Map<String, String> startTimeMap = new HashMap<>();
+        Map<String, String> endTimeMap = new HashMap<>();
+
+        if (startTimes != null && endTimes != null && dates.size() == startTimes.size() && dates.size() == endTimes.size()) {
+            for (int i = 0; i < dates.size(); i++) {
+                startTimeMap.put(dates.get(i), startTimes.get(i));
+                endTimeMap.put(dates.get(i), endTimes.get(i));
+            }
+        }
+
+        // modified日付をセットに変換
+        Set<String> modifiedSet = new HashSet<>();
+        if (modifiedDates != null && !modifiedDates.isEmpty()) {
+            modifiedSet.addAll(modifiedDates);
+        }
+
         // 表示用の日付情報を作成
         List<Map<String, String>> dateInfoList = new ArrayList<>();
         for (LocalDate date : sortedDates) {
             Map<String, String> dateInfo = new HashMap<>();
-            dateInfo.put("date", date.format(formatter)); // yyyy-MM-dd形式
+            String dateStr = date.format(formatter);
+            dateInfo.put("date", dateStr); // yyyy-MM-dd形式
 
             // 日本語表記の日付（例：11/15(金)）
             String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.JAPANESE);
@@ -69,6 +90,13 @@ public class TimeRegisterController {
             int dayOfWeekNumber = date.getDayOfWeek().getValue() % 7;
             dateInfo.put("dayOfWeek", String.valueOf(dayOfWeekNumber));
 
+            // 時間情報を追加（保存されていれば使用、なければデフォルト）
+            dateInfo.put("startTime", startTimeMap.getOrDefault(dateStr, "09:00"));
+            dateInfo.put("endTime", endTimeMap.getOrDefault(dateStr, "18:00"));
+
+            // modified状態を追加
+            dateInfo.put("modified", modifiedSet.contains(dateStr) ? "true" : "false");
+
             dateInfoList.add(dateInfo);
         }
 
@@ -76,7 +104,7 @@ public class TimeRegisterController {
         model.addAttribute("dateInfoList", dateInfoList);
         model.addAttribute("totalDays", dateInfoList.size());
 
-        return "TimeRegister";
+        return "timeregister_html/timeregister";
     }
 
     @PostMapping("/time-register/submit")

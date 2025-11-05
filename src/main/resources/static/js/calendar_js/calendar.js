@@ -5,11 +5,16 @@ let selectedDates = new Set();
 let holidays = {};
 let savedTemplate = null;
 let previousMonthData = null;
+let savedStartTimes = []; // 保存された開始時間
+let savedEndTimes = [];   // 保存された終了時間
+let savedModifiedDates = []; // 保存されたmodified日付
+let customDialogResolve = null; // カスタムダイアログのPromise resolve
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
     initializeSelectors();
     loadSelectedDatesFromUrl(); // URL パラメータから選択状態を復元
+    loadTimeDataFromUrl();      // URL パラメータから時間情報を復元
     removeUnselectedDates();    // 外した日付を未選択状態にする
     loadHolidays().then(() => {
         // 祝日データ読み込み完了後にカレンダーを描画
@@ -23,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function loadSelectedDatesFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     const dates = urlParams.get('selectedDates');
-    
+
     if (dates) {
         const dateArray = dates.split(',');
         dateArray.forEach(date => {
@@ -32,6 +37,14 @@ function loadSelectedDatesFromUrl() {
             }
         });
     }
+}
+
+// URLパラメータから時間情報を復元
+function loadTimeDataFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    savedStartTimes = urlParams.getAll('startTimes');
+    savedEndTimes = urlParams.getAll('endTimes');
+    savedModifiedDates = urlParams.getAll('modifiedDates');
 }
 
 // 外した日付を未選択状態にする
@@ -288,12 +301,12 @@ function setupEventListeners() {
     document.getElementById('selectAllBtn').addEventListener('click', toggleSelectAll);
     
     // 選択クリア
-    document.getElementById('clearAllBtn').addEventListener('click', () => {
+    document.getElementById('clearAllBtn').addEventListener('click', async () => {
         if (selectedDates.size === 0) {
-            alert('選択された日付がありません');
+            await showCustomAlert('選択された日付がありません');
             return;
         }
-        if (confirm('選択をすべてクリアしますか？')) {
+        if (await showCustomConfirm('選択をすべてクリアしますか？')) {
             clearAllDates();
         }
     });
@@ -316,6 +329,31 @@ function setupEventListeners() {
     
     // 次へボタン
     document.getElementById('nextBtn').addEventListener('click', showSubmitConfirmDialog);
+
+    // カスタムダイアログのイベントリスナー
+    document.getElementById('customDialogOk').addEventListener('click', () => {
+        if (customDialogResolve) {
+            customDialogResolve(true);
+            customDialogResolve = null;
+        }
+        hideCustomDialog();
+    });
+
+    document.getElementById('customDialogCancel').addEventListener('click', () => {
+        if (customDialogResolve) {
+            customDialogResolve(false);
+            customDialogResolve = null;
+        }
+        hideCustomDialog();
+    });
+
+    document.getElementById('customDialogClose').addEventListener('click', () => {
+        if (customDialogResolve) {
+            customDialogResolve(false);
+            customDialogResolve = null;
+        }
+        hideCustomDialog();
+    });
 }
 
 // 月選択ボタンの状態更新
@@ -335,13 +373,13 @@ function updateMonthButtons() {
 }
 
 // 全日選択/解除のトグル
-function toggleSelectAll() {
+async function toggleSelectAll() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
     const allDates = [];
-    
+
     // その月の選択可能な日付を収集
     for (let day = 1; day <= lastDay; day++) {
         const date = new Date(currentYear, currentMonth, day);
@@ -349,19 +387,19 @@ function toggleSelectAll() {
             allDates.push(formatDate(date));
         }
     }
-    
+
     // すべて選択済みかチェック
     const allSelected = allDates.every(dateStr => selectedDates.has(dateStr));
-    
+
     if (allSelected) {
         // すべて選択済み → 解除
-        if (confirm('全日の選択を解除しますか？')) {
+        if (await showCustomConfirm('全日の選択を解除しますか？')) {
             allDates.forEach(dateStr => selectedDates.delete(dateStr));
             renderCalendar();
         }
     } else {
         // 一部または未選択 → すべて選択
-        if (confirm('その月の全日を選択しますか？')) {
+        if (await showCustomConfirm('その月の全日を選択しますか？')) {
             allDates.forEach(dateStr => selectedDates.add(dateStr));
             renderCalendar();
         }
@@ -644,10 +682,52 @@ function submitShift() {
     // 選択した日付を時間設定画面に渡す
     const sortedDates = Array.from(selectedDates).sort();
     const params = new URLSearchParams();
-    
+
     sortedDates.forEach(dateStr => {
         params.append('dates', dateStr);
     });
-    
+
+    // 保存された時間情報も含める
+    if (savedStartTimes && savedStartTimes.length > 0) {
+        savedStartTimes.forEach(time => {
+            params.append('startTimes', time);
+        });
+    }
+
+    if (savedEndTimes && savedEndTimes.length > 0) {
+        savedEndTimes.forEach(time => {
+            params.append('endTimes', time);
+        });
+    }
+
+    // 保存されたmodified情報も含める
+    if (savedModifiedDates && savedModifiedDates.length > 0) {
+        savedModifiedDates.forEach(date => {
+            params.append('modifiedDates', date);
+        });
+    }
+
     window.location.href = '/time-register?' + params.toString();
+}
+// カスタムダイアログ関数
+function showCustomConfirm(message) {
+    return new Promise((resolve) => {
+        customDialogResolve = resolve;
+        document.getElementById('customDialogMessage').textContent = message;
+        document.getElementById('customDialogCancel').style.display = 'block';
+        document.getElementById('customDialog').style.display = 'flex';
+    });
+}
+
+function showCustomAlert(message) {
+    return new Promise((resolve) => {
+        customDialogResolve = resolve;
+        document.getElementById('customDialogMessage').textContent = message;
+        document.getElementById('customDialogCancel').style.display = 'none';
+        document.getElementById('customDialog').style.display = 'flex';
+    });
+}
+
+function hideCustomDialog() {
+    document.getElementById('customDialog').style.display = 'none';
 }
